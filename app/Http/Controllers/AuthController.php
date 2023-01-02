@@ -7,7 +7,7 @@ use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use PDO;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
@@ -45,7 +45,7 @@ class AuthController extends Controller
                 'message' => 'invalid credentials'
             ];
         }
-        if (Hash::chack($data['password'],$user->password)) {
+        if (Hash::check($data['password'],$user->password)) {
             return [
                 'succeed' => true,
                 'user' => $user
@@ -58,11 +58,11 @@ class AuthController extends Controller
     }
 
     public function loginWithToken(){
-        return $this->success(auth()->user,'login successfully');
+        return $this->success(Auth::user(),'login successfully');
     }
 
     public function logout(Request $request){
         $request->user()->currentAccessToken()->delete();
-        $this->success(null,'logout successfully');
+        return $this->success(null,'logout successfully');
     }
 }
