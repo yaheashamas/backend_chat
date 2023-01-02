@@ -26,4 +26,11 @@ class Chat extends Model
     {
         return $this->hasOne(ChatMessage::class, 'chat_id')->latest('updated_at');
     }
+
+    public function scopeHasParticipant($query,int $user_id)
+    {
+        return $query->whereHas('participants',function($q) use ($user_id){
+            $q->where('user_id',$user_id);
+        });
+    }
 }
