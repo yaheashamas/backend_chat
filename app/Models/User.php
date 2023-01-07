@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Notifications\SendNotification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -17,10 +18,18 @@ class User extends Authenticatable
 
     //create userToken
     const USER_TOKEN = 'userToken';
-    
+
     //relations
     public function chats()
     {
         return $this->hasMany(Chat::class,'created_by');
+    }
+    
+    public function routeNotificationForOneSignal() : array{
+        return ['tags'=>['key'=>'userId','relation'=>'=', 'value'=>(string)($this->id)]];
+    }
+
+    public function sendNewMessageNotification(Array $array){
+        $this->notify(new SendNotification($array));
     }
 }
